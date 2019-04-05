@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Document</title>
+</head>
+
+<body>
+    <div style="width:306px; height: 500px; border-radius: 15px;" class="mx-auto mt-1 row border border-white">
+        <input type="" class="col-12 text-right w-100 mt-3" id="input">
+        <div class="col">
+            <div class="row">
+                <button type="button" class="btn bth-outline-dark col-3" id="clear" value="AC">AC</button>
+                <button type="button" class="bth bth-outline-dark col-3" id="N-value">+/-</button>
+                <button type="button" class="bth bth-outline-dark col-3" id="percent">%</button>
+                <button type="button" class="bth bth-outline-dark col-3 operation" value="/">/</button>
+            </div>
+            <div class="row">
+                <button type="button" class="bth bth-outline-dark col-3 num">7</button>
+                <button type="button" class="bth bth-outline-dark col-3 num">8</button>
+                <button type="button" class="bth bth-outline-dark col-3 num">9</button>
+                <button type="button" class="bth bth-outline-dark col-3 operation" value="*">*</button>
+            </div>
+            <div class="row">
+                <button type="button" class="bth bth-outline-dark col-3 num">4</button>
+                <button type="button" class="bth bth-outline-dark col-3 num">5</button>
+                <button type="button" class="bth bth-outline-dark col-3 num">6</button>
+                <button type="button" class="bth bth-outline-dark col-3 operation" value="-">-</button>
+            </div>
+            <div class="row">
+                <button type="button" class="bth bth-outline-dark col-3 num">1</button>
+                <button type="button" class="bth bth-outline-dark col-3 num">2</button>
+                <button type="button" class="bth bth-outline-dark col-3 num">3</button>
+                <button type="button" class="bth bth-outline-dark col-3 operation" value="+">+</button>
+            </div>
+            <div class="row">
+                <button type="button" class="bth bth-outline-dark col-6 num" value="0">0</button>
+                <button type="button" class="bth bth-outline-dark col-3" id="pot" value=".">.</button>
+                <button type="button" class="bth bth-outline-dark col-3" id="equal">=</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        var input = document.getElementById("input");
+        var firstnumber = [];
+        var secondnumber = [];
+        var operation = document.getElementsByClassName("operation");
+        var count = "";
+        var bth = document.getElementsByClassName("num");
+        var clear = document.getElementById("clear");
+        document.getElementById("N-value").onclick = donValue;
+        document.getElementById("pot").onclick = doPot;
+        document.getElementById("percent").onclick = doPercent;
+        var tag = "";
+        var errornot = false;
+        clear.onclick = clearNum;
+        for (var i = 0; i < bth.length; i++) {
+            bth[i].onlick = getNum;
+        }
+        for (var i = 0; i < operation.length; i++) {
+            operation[i].onlick = operationNum;
+        }
+        function donValue() {
+            if (input.value == "") {
+                return;
+            }
+            input.value = parseFloat(input.value) * -1;
+            if (isNaN(input.value)) {
+                input.value = "錯誤";
+            }
+        }
+        function clearNum() {
+            if (clear.value == "AC") {
+                input.value = "";
+                firstnumber = [];
+                secondnumber = [];
+                tag = "";
+                errornot = false;
+                sid.innerText = "";
+                clear.value = "AC";
+            }
+            else if (clear.value == "C") {
+                input.value = "";
+                clear.innerHTML = "<h4>AC</h4>";
+                clear.value = "AC";
+            }
+            return;
+        }
+        function getNum() {
+            if (tag != "") {
+                if (tag == "+" || tag == "-") {
+                    secondnumber = Array.from(firstnumber);
+                }
+                firstnumber[firstnumber.length] = tag;
+                secondnumber[secondnumber.length] = tag;
+                input.value = "";
+            } tag = "";
+            if (input.value == "0") {
+                input.value = "";
+            }
+            input.value += this.value;
+            clear.innerHTML = "<h4>C</h4>";
+            clear.value = "C";
+            printList();
+        }
+        function doPot() {
+            if (input.value.indexOf(".") != -1 || input.value == "") {
+                return;
+            }
+            input.value += ".";
+        }
+        function doPercent() {
+            if (input.value == "") {
+                return;
+            }
+            input.value = parseFloat(input.value) / 100;
+            if (isNaN(input.value)) {
+                input.value = "錯誤";
+            }
+        }
+        document.getElementById("equal").onclick = doEqual;
+        function doEqual() {
+            if (firstnumber.length == 1 && secondnumber.length == 1 && secondnumber[0] == firstnumber[0]) {
+                input.value = secondnumber[0];
+            }
+            else if (firstnumber.length != 0 && secondnumber.length != 0) {
+                tagO = "=";
+                doOperation();
+            }
+            tagO = "";
+            firstnumber = [];
+            secondnumber = [];
+            errornot = false;
+            if (isNaN(input.value)) {
+                errornot = true;
+            }
+            printList();
+        }
+        function getOperation() {
+            if (tag != "=") {
+                tag = this.value;
+            }
+            if (firstnumber.length % 2 == 0 && secondnumber.length % 2 == 0) {
+                firstnumber[firstnumber.length] = input.value - 0;
+                secondnumber[secondnumber.length] = input.value - 0;
+            }
+            if (firstnumber.length % 2 == 1 && secondnumber.length % 2 == 1) {
+                if (firstnumber[firstnumber.length - 2] == "*" && secondnumber[secondnumber.length - 2] == "*") {
+                    input.value = firstnumber[firstnumber.length - 1] * firstnumber[firstnumber.length - 3];
+                    firstnumber.pop();
+                    firstnumber.pop();
+                    firstnumber[firstnumber.length - 1] = input.value - 0;
+                    secondnumber = Array.from(firstnumber);
+                }
+                else if (firstnumber[firstnumber.length - 2] == "/" && secondnumber[secondnumber.length - 2] == "/") {
+                    input.value = firstnumber[firstnumber.length - 3] / firstnumber[firstnumber.length - 1];
+                    if (firstnumber[firstnumber.length - 1] == 0) {
+                        errornot = true;
+                    }
+                    firstnumber.pop();
+                    firstnumber.pop();
+                    firstnumber[firstnumber.length - 1] = input.value - 0;
+                    secondnumber = Array.from(firstnumber);
+                }
+                if ((tag == "+" || tag == "-" || tag == "=") && firstnumber.length == 3 && secondnumber.length == 3) {
+                    if (firstnumber[firstnumber.length - 2] == "+") {
+                        input.value = firstnumber[firstnumber.length - 1] + firstnumber[firstnumber.length - 3];
+                        firstnumber.shift();
+                        firstnumber.shift();
+                        firstnumber[0] = input.value - 0;
+                    }
+                    else if (firstnumber[firstnumber.length - 2] == "-") {
+                        input.value = firstnumber[firstnumber.length - 3] - firstnumber[firstnumber.length - 1];
+                        firstnumber.shift();
+                        firstnumber.shift();
+                        firstnumber[0] = input.value - 0;
+                    }
+                }
+            }
+            if (tag == "*" || tag == "/") {
+                firstnumber = Array.from(secondnumber);
+                input.value = firstnumber[firstnumber.length - 1];
+            }
+            printList();
+        }
+
+    </script>
+
+</body>
+
+</html>
